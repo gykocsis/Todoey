@@ -25,7 +25,7 @@ class ToDoListViewController: UITableViewController {
         loadItems()
     }
     
-    //MARK - TableView Datasource Methods
+    //MARK: - TableView Datasource Methods
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
@@ -42,7 +42,7 @@ class ToDoListViewController: UITableViewController {
         return itemArray.count
     }
     
-    //MARK - TableView Delegate Methods
+    //MARK: - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         saveItems()
@@ -51,7 +51,7 @@ class ToDoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    // MARK - Add new items
+    // MARK: - Add new items
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "Add new todoey item", message: "", preferredStyle: .alert)
         
@@ -60,7 +60,6 @@ class ToDoListViewController: UITableViewController {
             let newItem = Item(context: self.context)
             newItem.title = alert.textFields![0].text!
             newItem.done = false
-            print(newItem.title!)
             self.itemArray.append(newItem)
             
             self.saveItems()
@@ -76,7 +75,7 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-    //MARK - Model manipulation methods
+    //MARK: - Model manipulation methods
     func saveItems() {
 
         do {
