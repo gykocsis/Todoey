@@ -15,13 +15,19 @@ class ToDoListViewController: UITableViewController {
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
+    
+    var selectedCategory: Category?
+    {
+        didSet{
+            loadItems()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         //print(dataFilePath)
-
+        
         loadItems()
     }
     
@@ -60,6 +66,7 @@ class ToDoListViewController: UITableViewController {
             let newItem = Item(context: self.context)
             newItem.title = alert.textFields![0].text!
             newItem.done = false
+            newItem.parentCategory = self.selectedCategory
             self.itemArray.append(newItem)
             
             self.saveItems()
@@ -77,7 +84,7 @@ class ToDoListViewController: UITableViewController {
     
     //MARK: - Model manipulation methods
     func saveItems() {
-
+        
         do {
             try context.save()
         } catch {
@@ -85,10 +92,20 @@ class ToDoListViewController: UITableViewController {
         }
         
         self.tableView.reloadData()
-        }
+    }
     
-    func loadItems(with request : NSFetchRequest<Item> = Item.fetchRequest()) {
-
+    func loadItems(withRequest request : NSFetchRequest<Item> = Item.fetchRequest(), withPredicate predicate: NSPredicate? = nil) {
+        
+        let categoryPredicate = NSPredicate(format: "parentCategory.name == %@", selectedCategory!.name!)
+        
+        if let additionalPredicate = predicate {
+            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+            request.predicate = compoundPredicate
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
+        print("You have passed over category: \(selectedCategory!.name!)")
         do {
             itemArray = try context.fetch(request)
         }
@@ -100,8 +117,8 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-
-
+    
+    
 }
 
 
@@ -111,11 +128,14 @@ extension ToDoListViewController: UISearchBarDelegate {
         
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        print(searchBar.text!)
+        print(selectedCategory!.name!)
         
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        loadItems(with: request)
+        loadItems(withRequest: request, withPredicate: predicate)
         
     }
     
