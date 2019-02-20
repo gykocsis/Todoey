@@ -1,5 +1,5 @@
 //
-//  Data.swift
+//  Item.swift
 //  Todoey
 //
 //  Created by Kocsis György on 2019. 02. 17..
@@ -9,8 +9,10 @@
 import Foundation
 import RealmSwift
 
-
-class Data: Object{
+class Item: Object {
     @objc dynamic var name : String = ""
-    @objc dynamic var age : Int = 0
+    @objc dynamic var done : Bool = false
+    @objc dynamic var dateCreated = Date()
+
+    var parentCategory = LinkingObjects(fromType: Category.self, property: "items")
 }

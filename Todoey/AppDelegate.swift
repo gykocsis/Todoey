@@ -24,13 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         do {
             let realm = try Realm()
-            let data = Data()
-            data.name = "Tupek"
-            data.age = 1
-            
-            try realm.write {
-                realm.add(data)
-            }
         } catch {
             print("Error in using Realm: \(error)")
         }
